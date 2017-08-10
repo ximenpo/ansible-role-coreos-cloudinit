@@ -25,7 +25,7 @@
 
 - name: generate local config
   connection: local
-  when:   not from_file
+  when:   not (from_file)
   block:
     - name: create local tmpfile
       tempfile:
@@ -38,41 +38,36 @@
         state:  directory
 
     - name: process file template
-      when:       from_file_template
+      when:       (from_file_template)
       block:
         - template:
-            force:    yes
             src:      '{{ from_file_template }}'
             dest:     '{{ tmp_dir.path }}/file.d/1.template'
         - set_fact:   from_local_file=true
 
     - name: process file path
-      when:       from_file_path
+      when:       (from_file_path)
       block:
         - copy:
-            force:    yes
             src:      '{{ from_file_path }}'
             dest:     '{{ tmp_dir.path }}/file.d/2.path'
         - set_fact:   from_local_file=true
 
     - name: process file content
-      when:       from_file_content != None
+      when:       (from_file_content != None)
       block:
         - copy:
-            force:    yes
             content:  '{{ from_file_content }}'
             dest:     '{{ tmp_dir.path }}/file.d/3.content'
         - set_fact:   from_local_file=true
 
     - name: generate & run script
-      when:       from_local_file
+      when:       (from_local_file)
       block:
         - copy:
-            force:    yes
             src:      'script-pre.sh'
             dest:     '{{ tmp_dir.path }}/file.d/0.pre'
         - copy:
-            force:    yes
             src:      'script-post.sh'
             dest:     '{{ tmp_dir.path }}/file.d/9.post'
         - assemble:
@@ -81,7 +76,7 @@
             
 
 - name: execute coreos-cloudinit script
-  when: from_local_file is defined
+  when: (from_local_file is defined)
   block:
     - script: >
         {{ tmp_dir.path }}/script.sh  {{ cloudinit_exec_arguments|quote }}
@@ -92,7 +87,7 @@
         state:  absent
 
 - name: execute coreos-cloudinit program
-  when: not from_local_file is defined
+  when: not (from_local_file is defined)
   become: true
   become_method:  sudo
   raw: >
