@@ -62,7 +62,7 @@
         - set_fact:   from_local_file=true
 
     - name: generate & run script
-      when:       (from_local_file)
+      when:       (from_local_file is defined)
       block:
         - copy:
             src:      'script-pre.sh'
@@ -88,7 +88,5 @@
 
 - name: execute coreos-cloudinit program
   when: not (from_local_file is defined)
-  become: true
-  become_method:  sudo
   raw: >
-      /usr/bin/coreos-cloudinit {{ cloudinit_exec_arguments }} {{ "-from-file " ~ from_file|quote if  from_file != None }}
+      sudo  /usr/bin/coreos-cloudinit {{ cloudinit_exec_arguments }} {{ "-from-file " ~ from_file|quote if  from_file != None }}
