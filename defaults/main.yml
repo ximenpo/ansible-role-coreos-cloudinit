@@ -49,3 +49,6 @@ cloudinit_from_file_template: ~
 cloudinit_from_file_path:     ~
 # file path used to be import
 cloudinit_from_file_content:  ~
+
+# file persist to path
+cloudinit_from_file_backup_path:  ~

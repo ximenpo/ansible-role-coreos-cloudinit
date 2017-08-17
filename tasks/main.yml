@@ -79,7 +79,9 @@
   when: (cloudinit_from_local_file is defined)
   block:
     - script: >
-        {{ tmp_dir.path }}/script.sh  {{ cloudinit_exec_arguments|quote }}
+        {{ tmp_dir.path }}/script.sh
+        {{ cloudinit_exec_arguments|quote }}
+        {{ cloudinit_from_file_backup_path|quote if cloudinit_from_file_backup_path != None else ""|quote }}
   always:
     - connection: local
       file:
@@ -89,4 +91,18 @@
 - name: execute coreos-cloudinit program
   when: not (cloudinit_from_local_file is defined)
   raw: >
-      sudo  /usr/bin/coreos-cloudinit {{ cloudinit_exec_arguments }} {{ "-from-file " ~ cloudinit_from_file|quote if  cloudinit_from_file != None }}
+      sudo  /usr/bin/coreos-cloudinit
+            {{ cloudinit_exec_arguments }}
+            {{ "-from-file " ~ cloudinit_from_file|quote if  cloudinit_from_file != None }}
+      && (
+            {% if (cloudinit_from_file != None
+                and cloudinit_from_file_backup_path != None
+                and cloudinit_from_file_backup_path|default("")|dirname != ''
+                and cloudinit_from_file_backup_path|default("")|dirname != '~'
+              ) %}
+      if [[ -e '{{cloudinit_from_file}}' ]]; then
+        sudo  mkdir -p  {{cloudinit_from_file_backup_path|dirname}}
+        sudo  cp    -f  {{cloudinit_from_file|quote}}   {{cloudinit_from_file_backup_path|quote}}
+      fi
+            {% endif %}
+      )

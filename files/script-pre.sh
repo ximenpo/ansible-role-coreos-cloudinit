@@ -1,5 +1,7 @@
 #/bin/bash
 
+set -e
+
 TMPFILE=$(mktemp -t tmp.cloudinit.XXXXXXXXXX) || exit 1
 trap "rm -f ${TMPFILE}" EXIT PIPE
 
