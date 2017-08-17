@@ -2,50 +2,50 @@
 # defaults file for ximenpo.coreos-cloudinit
 
 # Read the network config provided in cloud-drive and translate it from the specified format into networkd unit files
-convert_netconf: ~
+cloudinit_convert_netconf: ~
 # Read data from provided cloud-drive directory
-from_configdrive: ~
+cloudinit_from_configdrive: ~
 # Download DigitalOcean data from the provided url
-from_digitalocean_metadata: ~
+cloudinit_from_digitalocean_metadata: ~
 # Download EC2 data from the provided url
-from_ec2_metadata: ~
+cloudinit_from_ec2_metadata: ~
 # Download GCE data from the provided url
-from_gce_metadata: ~
+cloudinit_from_gce_metadata: ~
 # Download Packet data from metadata service
-from_packet_metadata: ~
+cloudinit_from_packet_metadata: ~
 # Download user-data from provided url
-from_url: ~
+cloudinit_from_url: ~
 # Read data from OVF Environment
-from_vmware_ovf_env: ~
+cloudinit_from_vmware_ovf_env: ~
 # Read data from provided waagent directory
-from_waagent: ~
+cloudinit_from_waagent: ~
 # Use the settings specific to the provided OEM
-oem: ~
+cloudinit_oem: ~
 # Add SSH keys to the system with the given name (default "coreos-cloudinit")
-ssh_key_name: ~
+cloudinit_ssh_key_name: ~
 
 # yes/no  - Parse /proc/cmdline for 'cloud-config-url=<url>', using the cloud-config served by an HTTP GET to <url>
-from_proc_cmdline:  ~
+cloudinit_from_proc_cmdline:  ~
 # yes/no  - Download data from CloudSigma server context
-from_cloudsigma_metadata: ~
+cloudinit_from_cloudsigma_metadata: ~
 # yes/no  - Read data from VMware guestinfo
-from_vmware_guestinfo: ~
+cloudinit_from_vmware_guestinfo: ~
 # yes/no  - Exits with 0 status in the event of malformed input from user-data
-ignore_failure: ~
+cloudinit_ignore_failure: ~
 
 # Base directory coreos-cloudinit should use to store data (default "/var/lib/coreos-cloudinit")
-workspace:      ~
+cloudinit_workspace:      ~
 # yes/no  - Validate the user-data but do not apply it to the system
-validate:       ~
+cloudinit_validate:       ~
 
 #
 # from-file used variables
 #
 # Read user-data from provided file
-from_file:   ~
+cloudinit_from_file:   ~
 # template file used to be generated
-from_file_template: ~
+cloudinit_from_file_template: ~
 # file path used to be import
-from_file_path:     ~
+cloudinit_from_file_path:     ~
 # file path used to be import
-from_file_content:  ~
+cloudinit_from_file_content:  ~

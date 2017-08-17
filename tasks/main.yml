@@ -4,28 +4,28 @@
 - name: init cloudinit_exec_arguments
   set_fact:
     cloudinit_exec_arguments:  >-
-        {{ "-convert-netconf " ~ convert_netconf|quote  if  convert_netconf != None else "" }}
-        {{ "-from-configdrive " ~ from_configdrive|quote if  from_configdrive != None else "" }}
-        {{ "-from-digitalocean-metadata " ~ from_digitalocean_metadata|quote if  from_digitalocean_metadata != None else "" }}
-        {{ "-from-ec2-metadata " ~ from_ec2_metadata|quote if  from_ec2_metadata != None else "" }}
-        {{ "-from-gce-metadata " ~ from_gce_metadata|quote if  from_gce_metadata != None else "" }}
-        {{ "-from-packet-metadata " ~ from_packet_metadata|quote if  from_packet_metadata != None else "" }}
-        {{ "-from-gce-metadata " ~ from_gce_metadata|quote if  from_gce_metadata != None else "" }}
-        {{ "-from-url " ~ from_url|quote if  from_url != None else "" }}
-        {{ "-from-vmware-ovf-env " ~ from_vmware_ovf_env|quote if  from_vmware_ovf_env != None else "" }}
-        {{ "-from-waagent " ~ from_waagent|quote if  from_waagent != None else "" }}
-        {{ "-oem " ~ oem|quote if  oem != None else "" }}
-        {{ "-ssh-key-name " ~ ssh_key_name|quote if  ssh_key_name != None else "" }}
-        {{ "-from-proc-cmdline " if  from_proc_cmdline else "" }}
-        {{ "-from-cloudsigma-metadata " if  from_cloudsigma_metadata else "" }}
-        {{ "-from-vmware-guestinfo " if  from_vmware_guestinfo else "" }}
-        {{ "-ignore-failure " if  ignore_failure else "" }}
-        {{ "-validate " if  validate else "" }}
-        {{ "-workspace " ~ workspace|quote if  workspace != None else "" }}
+        {{ "-convert-netconf " ~ cloudinit_convert_netconf|quote  if  cloudinit_convert_netconf != None else "" }}
+        {{ "-from-configdrive " ~ cloudinit_from_configdrive|quote if  cloudinit_from_configdrive != None else "" }}
+        {{ "-from-digitalocean-metadata " ~ cloudinit_from_digitalocean_metadata|quote if  cloudinit_from_digitalocean_metadata != None else "" }}
+        {{ "-from-ec2-metadata " ~ cloudinit_from_ec2_metadata|quote if  cloudinit_from_ec2_metadata != None else "" }}
+        {{ "-from-gce-metadata " ~ cloudinit_from_gce_metadata|quote if  cloudinit_from_gce_metadata != None else "" }}
+        {{ "-from-packet-metadata " ~ cloudinit_from_packet_metadata|quote if  cloudinit_from_packet_metadata != None else "" }}
+        {{ "-from-gce-metadata " ~ cloudinit_from_gce_metadata|quote if  cloudinit_from_gce_metadata != None else "" }}
+        {{ "-from-url " ~ cloudinit_from_url|quote if  cloudinit_from_url != None else "" }}
+        {{ "-from-vmware-ovf-env " ~ cloudinit_from_vmware_ovf_env|quote if  cloudinit_from_vmware_ovf_env != None else "" }}
+        {{ "-from-waagent " ~ cloudinit_from_waagent|quote if  cloudinit_from_waagent != None else "" }}
+        {{ "-oem " ~ cloudinit_oem|quote if  cloudinit_oem != None else "" }}
+        {{ "-ssh-key-name " ~ cloudinit_ssh_key_name|quote if  cloudinit_ssh_key_name != None else "" }}
+        {{ "-from-proc-cmdline " if  cloudinit_from_proc_cmdline else "" }}
+        {{ "-from-cloudsigma-metadata " if  cloudinit_from_cloudsigma_metadata else "" }}
+        {{ "-from-vmware-guestinfo " if  cloudinit_from_vmware_guestinfo else "" }}
+        {{ "-ignore-failure " if  cloudinit_ignore_failure else "" }}
+        {{ "-validate " if  cloudinit_validate else "" }}
+        {{ "-workspace " ~ cloudinit_workspace|quote if  cloudinit_workspace != None else "" }}
 
 - name: generate local config
   connection: local
-  when:   not (from_file)
+  when:   not (cloudinit_from_file)
   block:
     - name: create local tmpfile
       tempfile:
@@ -38,31 +38,31 @@
         state:  directory
 
     - name: process file template
-      when:       (from_file_template)
+      when:       (cloudinit_from_file_template)
       block:
         - template:
-            src:      '{{ from_file_template }}'
+            src:      '{{ cloudinit_from_file_template }}'
             dest:     '{{ tmp_dir.path }}/file.d/1.template'
-        - set_fact:   from_local_file=true
+        - set_fact:   cloudinit_from_local_file=true
 
     - name: process file path
-      when:       (from_file_path)
+      when:       (cloudinit_from_file_path)
       block:
         - copy:
-            src:      '{{ from_file_path }}'
+            src:      '{{ cloudinit_from_file_path }}'
             dest:     '{{ tmp_dir.path }}/file.d/2.path'
-        - set_fact:   from_local_file=true
+        - set_fact:   cloudinit_from_local_file=true
 
     - name: process file content
-      when:       (from_file_content != None)
+      when:       (cloudinit_from_file_content != None)
       block:
         - copy:
-            content:  '{{ from_file_content }}'
+            content:  '{{ cloudinit_from_file_content }}'
             dest:     '{{ tmp_dir.path }}/file.d/3.content'
-        - set_fact:   from_local_file=true
+        - set_fact:   cloudinit_from_local_file=true
 
     - name: generate & run script
-      when:       (from_local_file is defined)
+      when:       (cloudinit_from_local_file is defined)
       block:
         - copy:
             src:      'script-pre.sh'
@@ -76,7 +76,7 @@
             
 
 - name: execute coreos-cloudinit script
-  when: (from_local_file is defined)
+  when: (cloudinit_from_local_file is defined)
   block:
     - script: >
         {{ tmp_dir.path }}/script.sh  {{ cloudinit_exec_arguments|quote }}
@@ -87,6 +87,6 @@
         state:  absent
 
 - name: execute coreos-cloudinit program
-  when: not (from_local_file is defined)
+  when: not (cloudinit_from_local_file is defined)
   raw: >
       sudo  /usr/bin/coreos-cloudinit {{ cloudinit_exec_arguments }} {{ "-from-file " ~ from_file|quote if  from_file != None }}
