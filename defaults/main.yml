@@ -52,3 +52,6 @@ cloudinit_from_file_content:  ~
 
 # file persist to path
 cloudinit_from_file_backup_path:  ~
+
+# for debugging...
+cloudinit_debug:  false

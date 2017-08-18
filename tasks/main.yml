@@ -73,6 +73,10 @@
         - assemble:
             src:      '{{ tmp_dir.path }}/file.d/'
             dest:     '{{ tmp_dir.path }}/script.sh'
+        - when:
+            -   (cloudinit_debug is defined)
+            -   (cloudinit_debug)
+          debug:      msg='{{ lookup("file","{{ tmp_dir.path }}/script.sh") }}'
             
 
 - name: execute coreos-cloudinit script
